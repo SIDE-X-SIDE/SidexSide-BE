@@ -2,4 +2,4 @@ from django.shortcuts import render
 
 # Create your views here.
 def create_user(request):
-    pass
+    return 0
