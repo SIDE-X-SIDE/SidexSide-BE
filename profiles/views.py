@@ -2,4 +2,5 @@ from django.shortcuts import render
 
 # Create your views here.
 def create_profile(request):
-    pass
+    return render(request, 'profiles/index.html')
+
