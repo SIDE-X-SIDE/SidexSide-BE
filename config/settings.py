@@ -41,7 +41,7 @@ SECRET_KEY = get_secret("SECRET_KEY")
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -60,7 +60,16 @@ PROJECT_APPS = [
     'profiles',
 ]
 
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    #소셜로그인 관련앱
+    'django.contrib.sites',#사이트,url정보 관리 해주는 기능
+    'allauth',#설치한앱
+    'allauth.account',#소셜로그인한 계정관리
+    'allauth.socialaccount',#소셜account 정보관리
+    'allauth.socialaccount.providers.kakao',#네이버 소셜로그인
+
+    'rest_framework'
+]
 
 # Installed app 종합
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
@@ -69,7 +78,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -147,3 +156,34 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+###############################################################
+
+
+
+#social login settings
+
+#로그인과정전에 누구한테 맡길지
+AUTHENTICATION_BACKENDS=[
+    'django.contrib.auth.backends.ModelBackend',#기본장고 유저
+    'allauth.account.auth_backends.AuthenticationBackend',#소셜로그인 인증체계
+]
+
+# 위에'django.contrib.sites'에 첫번째 인스턴스 사용
+SITE_ID=1
+
+LOGIN_REDIRECT_URL = '/'
+
+# Email settings
+# allauth가 제공하는 이메일 인증이나 비밀번호 찾기 기능을 활용하려면 이메일을 보낼 수 있어야 하는데 이때, 이메일을 어떻게 보내야할지 설정하는게
+# EMAIL_BACKEND 기능입니다. 지금 설정값은 터미널 콘솔로 이메일을 보내게 설정해둔것 입니다. [ 나중에 변경 예정 ]
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+AUTH_USER_MODEL = 'accounts.User'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 로그인시 username 이 아니라 email을 사용하게 하는 설정
+ACCOUNT_EMAIL_VARIFICATION = 'optional'
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_REQUIRED = True  # 회원가입시 필수 이메일을 필수항목으로 만들기
+ACCOUNT_UNIQUE_USERNAME = False
+ACCOUNT_USERNAME_REQUIRED = False

@@ -1,3 +1,5 @@
+{% load socialaccount %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +9,25 @@
     <title>Document</title>
 </head>
 <body>
-    헬로우
+    {% if user.is_authenticated %}
+
+    {% for account in user.socialaccount_set.all %}
+    
+    <span>{{ account}}님이 로그인중입니다.</span>
+
+    <div> user : {{request.user}}  </div>
+    
+    <div>uid : {{ account.uid }}</div>
+    <div> provider : {{ account.provider }} </div>
+    <div> get_avatar_url : {{ account.get_avatar_url }} </div>
+
+    <p>Username: {{ account.extra_data.username }}</p>
+    <p>First Name: {{ account.extra_data.first_name }}</p>
+    <p>Last Name: {{ account.extra_data.last_name }}</p>
+    
+    {% endfor %}
+
+    {% endif %}
+    <a href="/accounts/kakao/login/?process=login">카카오로그인</a>
 </body>
 </html>
