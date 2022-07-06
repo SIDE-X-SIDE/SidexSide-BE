@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
+import datetime
 from django.core.exceptions import ImproperlyConfigured
 from pathlib import Path
 import os, json
@@ -61,14 +62,20 @@ PROJECT_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    #소셜로그인 관련앱
+    # SOCIAL LOGIN
     'django.contrib.sites',#사이트,url정보 관리 해주는 기능
     'allauth',#설치한앱
     'allauth.account',#소셜로그인한 계정관리
     'allauth.socialaccount',#소셜account 정보관리
     'allauth.socialaccount.providers.kakao',#네이버 소셜로그인
 
-    'rest_framework'
+    # DRF
+    'rest_framework',
+    'rest_framework_jwt',
+    
+    # CORS
+    'corsheaders',
+
 ]
 
 # Installed app 종합
@@ -82,6 +89,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -182,8 +195,43 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 AUTH_USER_MODEL = 'accounts.User'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 로그인시 username 이 아니라 email을 사용하게 하는 설정
+
 ACCOUNT_EMAIL_VARIFICATION = 'optional'
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_REQUIRED = True  # 회원가입시 필수 이메일을 필수항목으로 만들기
+
+ACCOUNT_SESSION_REMEMBER = True
+
 ACCOUNT_UNIQUE_USERNAME = False
 ACCOUNT_USERNAME_REQUIRED = False
+
+
+#rest_framework
+REST_FRAMEWORK = {
+    # 인증된 유저만 헤더에 access token 을 포함하여 유효한 유저만이 접근이 가능해지는 것을 디폴트로. permission_classes 변수 설정할 필요가 없음.
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',  # 인증된 회원만 엑세스 허용
+        # 'rest_framework.permissions.AllowAny',         # 모든 회원 액세스 허용
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication', #api 실행시 인증할 클래스 정의
+    ),
+}
+
+
+# REST_FRAMEWORK = {
+#     'DATETIME_FORMAT': "%m/%d/%Y %I:%M%P",
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.TokenAuthentication',
+#     ],
+# }
+
+JWT_AUTH = { # 추가
+   'JWT_SECRET_KEY': SECRET_KEY,
+   'JWT_ALGORITHM': 'HS256',
+   'JWT_VERIFY_EXPIRATION' : True, #토큰검증
+   'JWT_ALLOW_REFRESH': True, #유효기간이 지나면 새로운 토큰반환의 refresh
+   'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=30),  # Access Token의 만료 시간
+   'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=3), # Refresh Token의 만료 시간
+   'JWT_RESPONSE_PAYLOAD_HANDLER': 'api.custom_responses.my_jwt_response_handler'
+}
