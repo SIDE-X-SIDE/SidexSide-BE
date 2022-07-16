@@ -7,6 +7,7 @@ User = get_user_model()
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # user_pk = models.IntegerField(blank=True)
+    profile_img = models.ImageField(default="accounts/person.png", upload_to="accounts/", null=True, blank=True)
     intro = models.CharField(max_length=150, blank=True)
     part = models.CharField(max_length=20, blank=True)
     sub_part = models.CharField(max_length=20, blank=True)
@@ -23,6 +24,8 @@ class Profile_url(models.Model):
 
 class Proj(models.Model):
     profile = models.ForeignKey('Profile', on_delete=models.CASCADE, null=True, blank=True)
-    title = models.CharField(max_length=50, blank=True)
     img = models.ImageField(upload_to="proj/image", blank=True)
-    hash_tag = models.CharField(max_length=100, blank=True)
+    title = models.CharField(max_length=50, blank=True)
+    body = models.CharField(max_length=100, blank=True)
+    start_date = models.DateTimeField(blank=True)
+    end_date = models.DateTimeField(blank=True)

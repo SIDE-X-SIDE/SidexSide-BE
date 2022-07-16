@@ -13,6 +13,7 @@ import datetime
 from django.core.exceptions import ImproperlyConfigured
 from pathlib import Path
 import os, json
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -64,16 +65,23 @@ PROJECT_APPS = [
 THIRD_PARTY_APPS = [
     # SOCIAL LOGIN
     'django.contrib.sites',#사이트,url정보 관리 해주는 기능
+
+    # pip3 install django-allauth
     'allauth',#설치한앱
     'allauth.account',#소셜로그인한 계정관리
     'allauth.socialaccount',#소셜account 정보관리
     'allauth.socialaccount.providers.kakao',#네이버 소셜로그인
 
-    # DRF
+
+
+    # pip3 install djangorestframework
     'rest_framework',
-    'rest_framework_jwt',
+    'rest_framework.authtoken',
+
+    # pip3 install djangorestframework-simplejwt
+    'rest_framework_simplejwt',
     
-    # CORS
+    # pip3 install django corseheader
     'corsheaders',
 
 ]
@@ -212,32 +220,26 @@ ACCOUNT_UNIQUE_USERNAME = False
 ACCOUNT_USERNAME_REQUIRED = False
 
 
-#rest_framework
+#simple-jwt
 REST_FRAMEWORK = {
-    # 인증된 유저만 헤더에 access token 을 포함하여 유효한 유저만이 접근이 가능해지는 것을 디폴트로. permission_classes 변수 설정할 필요가 없음.
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',  # 인증된 회원만 엑세스 허용
-        # 'rest_framework.permissions.AllowAny',         # 모든 회원 액세스 허용
+     'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication', #api 실행시 인증할 클래스 정의
-    ),
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=14),
+    'SIGNING_KEY': 'SECRET',
+    'ALGORITHM': 'HS256',
+    'AUTH_HEADER_TYPES': ('JWT',),
 }
 
 
-# REST_FRAMEWORK = {
-#     'DATETIME_FORMAT': "%m/%d/%Y %I:%M%P",
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.TokenAuthentication',
-#     ],
-# }
 
-JWT_AUTH = { # 추가
-   'JWT_SECRET_KEY': SECRET_KEY,
-   'JWT_ALGORITHM': 'HS256',
-   'JWT_VERIFY_EXPIRATION' : True, #토큰검증
-   'JWT_ALLOW_REFRESH': True, #유효기간이 지나면 새로운 토큰반환의 refresh
-   'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=30),  # Access Token의 만료 시간
-   'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=3), # Refresh Token의 만료 시간
-   'JWT_RESPONSE_PAYLOAD_HANDLER': 'api.custom_responses.my_jwt_response_handler'
-}
+
+
+

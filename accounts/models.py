@@ -4,8 +4,9 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class User(AbstractUser):
-    profile_img = models.ImageField(null=True, upload_to="accounts/", blank=True)
-    followings = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
+    phone = models.CharField(default = "01000000000", max_length=11, blank=True)
+    is_email_open = models.IntegerField(default=0)
+    is_phone_open = models.IntegerField(default=0)
     
     def __str__(self):
         return self.email
