@@ -80,9 +80,14 @@ THIRD_PARTY_APPS = [
 
     # pip3 install djangorestframework-simplejwt
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     
     # pip3 install django corseheader
     'corsheaders',
+
+    # pip3 install dj-rest-auth
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
 
 ]
 
@@ -202,6 +207,8 @@ SITE_ID=1
 
 LOGIN_REDIRECT_URL = '/'
 
+
+
 # Email settings
 # allauth가 제공하는 이메일 인증이나 비밀번호 찾기 기능을 활용하려면 이메일을 보낼 수 있어야 하는데 이때, 이메일을 어떻게 보내야할지 설정하는게
 # EMAIL_BACKEND 기능입니다. 지금 설정값은 터미널 콘솔로 이메일을 보내게 설정해둔것 입니다. [ 나중에 변경 예정 ]
@@ -210,14 +217,20 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 AUTH_USER_MODEL = 'accounts.User'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 로그인시 username 이 아니라 email을 사용하게 하는 설정
 
+ACCOUNT_EMAIL_REQUIRED = True  # 회원가입시 필수 이메일을 필수항목으로 만들기
 ACCOUNT_EMAIL_VARIFICATION = 'optional'
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_EMAIL_REQUIRED = True  # 회원가입시 필수 이메일을 필수항목으로 만들기
 
 ACCOUNT_SESSION_REMEMBER = True
 
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_UNIQUE_USERNAME = False
 ACCOUNT_USERNAME_REQUIRED = False
+
+
+
+
+
 
 
 #simple-jwt
@@ -227,6 +240,8 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     )
 }
 
@@ -236,9 +251,12 @@ SIMPLE_JWT = {
     'SIGNING_KEY': 'SECRET',
     'ALGORITHM': 'HS256',
     'AUTH_HEADER_TYPES': ('JWT',),
+
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
 }
 
-
+REST_USE_JWT = True
 
 
 

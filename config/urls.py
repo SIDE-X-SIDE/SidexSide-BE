@@ -26,9 +26,15 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('profiles.urls')),
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('allauth.urls')),
-    path('', include('profiles.urls')),
+    path('accounts/', include('dj_rest_auth.urls')),
+    path('accounts/', include('dj_rest_auth.registration.urls')),
+    
+    # drf
+    path('api-auth/', include('rest_framework.urls')),
+
 
     #simple-jwt
     path('jwt-token-auth/', TokenObtainPairView.as_view(), name="token_obtain_pair"),
